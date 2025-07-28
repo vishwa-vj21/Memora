@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 // Load Google Fonts (these are automatically server-safe)
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({
       className={`light ${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="min-h-screen font-sans antialiased grainy">
+        <Navbar />
         {children}
       </body>
     </html>
