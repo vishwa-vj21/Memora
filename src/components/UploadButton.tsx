@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "./ui/Button";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/Dialog";
 
 const UploadButton = () => {
   const [isOpen, setIsOpen] = useState(false);
