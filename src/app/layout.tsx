@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 
+import "react-loading-skeleton/dist/skeleton.css"
+
 // Load Google Fonts (these are automatically server-safe)
 const geistSans = Geist({
   subsets: ["latin"],
