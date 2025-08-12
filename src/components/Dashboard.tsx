@@ -2,15 +2,32 @@
 
 import { trpc } from "@/app/_trpc/client";
 import UploadButton from "./UploadButton";
-import { Ghost, MessageSquare, Plus, Trash } from "lucide-react";
+import { Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "./ui/Button";
+import { useState } from "react";
 
 const Dashboard = () => {
+  const [currentDeleteFile, setCurrentDeleteFile] = useState<string | null>(
+    null
+  );
+
+  const utils = trpc.useUtils();
   const { data: files, isLoading } = trpc.getUserFiles.useQuery();
+  const { mutate: deleteFile } = trpc.deleteUserFile.useMutation({
+    onSuccess: () => {
+      utils.getUserFiles.invalidate();
+    },
+    onMutate({ id }) {
+      setCurrentDeleteFile(id);
+    },
+    onSettled() {
+      setCurrentDeleteFile(null);
+    },
+  });
   return (
     <main className="mx-auto max-w-7xl md:p-10">
       <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
@@ -55,8 +72,19 @@ const Dashboard = () => {
                     <MessageSquare className="h-4 w-4" />
                     mocked
                   </div>
-                  <Button size="sm" className="w-full" variant="destructive">
-                    <Trash className="h-4 w-4" />
+                  <Button
+                    onClick={() => {
+                      deleteFile({ id: file.id });
+                    }}
+                    size="sm"
+                    className="w-full"
+                    variant="destructive"
+                  >
+                    {currentDeleteFile === file.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </li>
