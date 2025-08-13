@@ -9,12 +9,18 @@ import { Cloud, File, Loader2 } from "lucide-react";
 import { Progress } from "./ui/Progress";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
+import { useUploadThing } from "@/lib/uploadthing";
+import { Toaster } from "./ui/sonner";
+import { toast, useSonner } from "sonner";
 
 const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+
+  const { toasts } = useSonner();
+  const { startUpload } = useUploadThing("pdfUploader");
 
   const startSimulatedProgress = () => {
     setUploadProgress(0);
@@ -39,6 +45,15 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         setIsUploading(true);
 
         const progressInterval = startSimulatedProgress();
+
+        const res = await startUpload(acceptedFile);
+
+        if (!res) {
+          toast("Something went wrong", {
+            description: "Please try again later",
+          });
+          return;
+        }
         clearInterval(progressInterval);
         setUploadProgress(100);
       }}
