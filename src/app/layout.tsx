@@ -4,7 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 
-import "react-loading-skeleton/dist/skeleton.css"
+import "react-loading-skeleton/dist/skeleton.css";
+import { Toaster } from "@/components/ui/sonner";
 
 // Load Google Fonts (these are automatically server-safe)
 const geistSans = Geist({
@@ -36,6 +37,7 @@ export default function RootLayout({
     >
       <Providers>
         <body className="min-h-screen font-sans antialiased grainy">
+          <Toaster />
           <Navbar />
           {children}
         </body>
