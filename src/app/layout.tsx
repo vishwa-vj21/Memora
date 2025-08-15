@@ -7,6 +7,8 @@ import Providers from "@/components/Providers";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Toaster } from "sonner";
 
+import "simplebar-react/dist/simplebar.min.css";
+
 // Load Google Fonts (these are automatically server-safe)
 const geistSans = Geist({
   subsets: ["latin"],

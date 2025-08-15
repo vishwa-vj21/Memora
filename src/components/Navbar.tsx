@@ -1,8 +1,16 @@
+"use client";
 import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
-import { ArrowRight } from "lucide-react";
-import { buttonVariants } from "./ui/Button";
+import { ArrowRight, Github } from "lucide-react";
+import { Button, buttonVariants } from "./ui/Button";
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+  integrity="sha512-yH2hNqJeVhFgKXbSoT05cbF4+3VvYc0Z8uQpD/hFYp7LQfXqj9yHqFfVYc4uR7p8bRTHR/3N7J9s4dKqk2hzYQ=="
+  crossOrigin="anonymous"
+  referrerPolicy="no-referrer"
+/>;
 
 const Navbar = () => {
   return (
@@ -31,6 +39,17 @@ const Navbar = () => {
               <RegisterLink className={buttonVariants({ size: "sm" })}>
                 Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
               </RegisterLink>
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full"
+                onClick={() =>
+                  window.open("https://github.com/vishwa-vj21", "_blank")
+                }
+              >
+                {" "}
+                <Github className="h-5 w-5" />{" "}
+              </Button>
             </>
           </div>
         </div>
