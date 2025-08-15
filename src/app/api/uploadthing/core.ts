@@ -28,14 +28,11 @@ export const ourFileRouter = {
           key: file.key,
           name: file.name,
           userId: metadata.userId,
-          url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
+          // url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`,
+          url: file.ufsUrl,
           uploadStatus: "PROCESSING",
         },
       });
-      // console.log("Upload complete for userId:", metadata.userId);
-      // console.log("file url", file.url); // ✅ safer than file.ufsUrl
-
-      // return { uploadedBy: metadata.userId }; // ✅ what frontend gets
     }),
 } satisfies FileRouter;
 
