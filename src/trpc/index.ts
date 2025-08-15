@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { z } from "zod";
 
 export const appRouter = router({
+  //defining api object with mutliple endpoints
   authCallback: publicProcedure.query(async () => {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
@@ -18,6 +19,7 @@ export const appRouter = router({
       },
     });
     if (!dbUser) {
+      //syncing with database if not already synced
       await db.user.create({
         data: {
           id: user.id,
@@ -36,6 +38,21 @@ export const appRouter = router({
       },
     });
   }),
+  getFile: privateProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+
+      const file = await db.file.findFirst({
+        where: {
+          key: input.key,
+          userId,
+        },
+      });
+      if (!file) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return file;
+    }),
   deleteUserFile: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

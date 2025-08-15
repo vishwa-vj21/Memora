@@ -10,10 +10,9 @@ import { Progress } from "./ui/Progress";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
 import { useUploadThing } from "@/lib/uploadthing";
-import { Toaster } from "./ui/sonner";
 import { toast, useSonner } from "sonner";
 
-const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
+const UploadDropzone = () => {
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -21,6 +20,14 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
 
   const { toasts } = useSonner();
   const { startUpload } = useUploadThing("pdfUploader");
+
+  const { mutate: startPolling } = trpc.getFile.useMutation({
+    onSuccess: (file) => {
+      router.push(`dashboard/${file.id}`);
+    },
+    retry: true,
+    retryDelay: 500,
+  });
 
   const startSimulatedProgress = () => {
     setUploadProgress(0);
@@ -49,13 +56,23 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
         const res = await startUpload(acceptedFile);
 
         if (!res) {
-          toast("Something went wrong", {
+          return toast("Something went wrong", {
             description: "Please try again later",
           });
-          return;
+        }
+
+        const [fileResponse] = res;
+        const key = fileResponse?.key;
+
+        if (!key) {
+          return toast("Something went wrong", {
+            description: "Please try again later",
+          });
         }
         clearInterval(progressInterval);
         setUploadProgress(100);
+
+        startPolling({ key });
       }}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
@@ -74,9 +91,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-zinc-500">
-                  PDF (up to {isSubscribed ? "16" : "4"}MB)
-                </p>
+                <p className="text-xs text-zinc-500">PDF (up to 4 MB)</p>
               </div>
 
               {acceptedFiles && acceptedFiles[0] ? (
@@ -93,15 +108,18 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
               {isUploading ? (
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <Progress
+                    indicatorColor={
+                      uploadProgress === 100 ? "bg-green-500" : ""
+                    }
                     value={uploadProgress}
                     className="h-1 w-full bg-zinc-200"
                   />
-                  {/* {uploadProgress === 100 ? (
+                  {uploadProgress === 100 ? (
                     <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
                       <Loader2 className="h-3 w-3 animate-spin" />
                       Redirecting...
                     </div>
-                  ) : null} */}
+                  ) : null}
                 </div>
               ) : null}
 
@@ -119,7 +137,7 @@ const UploadDropzone = ({ isSubscribed }: { isSubscribed: boolean }) => {
   );
 };
 
-const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
+const UploadButton = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -136,7 +154,7 @@ const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
       </DialogTrigger>
 
       <DialogContent>
-        <UploadDropzone isSubscribed={isSubscribed} />
+        <UploadDropzone />
       </DialogContent>
     </Dialog>
   );

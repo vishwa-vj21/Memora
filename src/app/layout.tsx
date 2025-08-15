@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 
 import "react-loading-skeleton/dist/skeleton.css";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 
 // Load Google Fonts (these are automatically server-safe)
 const geistSans = Geist({
