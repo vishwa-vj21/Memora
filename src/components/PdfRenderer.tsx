@@ -63,7 +63,6 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     resolver: zodResolver(customPageValidator),
   });
 
-  // debounce the width updates so that rendering is smooth
   useEffect(() => {
     const handler = setTimeout(() => {
       if (width) setDebouncedWidth(width);
@@ -155,12 +154,12 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           >
             <RotateCw className="w-4 h-4" />
           </Button>
-          <PdfFullscreen />
+          <PdfFullscreen fileUrl={url} />
         </div>
       </div>
 
       <div className="flex-1 w-full max-h-screen">
-        <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)">
+        <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)]">
           <div ref={ref}>
             <Document
               loading={
