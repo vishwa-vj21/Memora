@@ -7,6 +7,7 @@ import Link from "next/link";
 import { buttonVariants } from "./ui/Button";
 
 import ChatInput from "./ChatInput";
+import Messages from "./Messages";
 
 interface ChatWrapperProps {
   fileId: string;
@@ -14,12 +15,13 @@ interface ChatWrapperProps {
 
 const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
   const { data, isLoading } = trpc.getFileUploadStatus.useQuery(
+    { fileId },
     {
-      fileId,
-    },
-    {
-      refetchInterval: (data) =>
-        data?.status === "SUCCESS" || data?.status === "FAILED" ? false : 500,
+      refetchInterval: (query) =>
+        query.state.data?.status === "SUCCESS" ||
+        query.state.data?.status === "FAILED"
+          ? false
+          : 500,
     }
   );
 
@@ -35,7 +37,6 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
             </p>
           </div>
         </div>
-
         <ChatInput isDisabled />
       </div>
     );
@@ -50,7 +51,6 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
             <p className="text-zinc-500 text-sm">This won&apos;t take long.</p>
           </div>
         </div>
-
         <ChatInput isDisabled />
       </div>
     );
@@ -63,11 +63,7 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
             <XCircle className="h-8 w-8 text-red-500" />
             <h3 className="font-semibold text-xl">Too many pages in PDF</h3>
             <p className="text-zinc-500 text-sm">
-              Your{" "}
-              <span className="font-medium">
-                {isSubscribed ? "Pro" : "Free"}
-              </span>{" "}
-              plan supports up to 4 pages per PDF.
+              Your plan supports up to 4 pages per PDF.
             </p>
             <Link
               href="/dashboard"
@@ -81,15 +77,15 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
             </Link>
           </div>
         </div>
-
         <ChatInput isDisabled />
       </div>
     );
 
   return (
     <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2">
-      <div className="flex-1 justify-between flex flex-col mb-28"></div>
-
+      <div className="flex-1 justify-between flex flex-col mb-28">
+        <Messages />
+      </div>
       <ChatInput />
     </div>
   );
