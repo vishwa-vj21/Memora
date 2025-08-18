@@ -28,7 +28,7 @@ It features real-time AI memory, modern UI, and a smooth developer experience.
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/yourusername/memora.git
+git clone https://github.com/vishwa-vj21/Memora.git
 cd memora
 npm install
 npm run dev
