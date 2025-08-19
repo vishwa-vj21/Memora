@@ -2,10 +2,12 @@ import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
-// import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { pinecone } from "@/lib/pinecone";
-// import { OpenAIEmbeddings } from "@langchain/community/embeddings/openai";
+
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
+
+import { getPineconeClient } from "@/lib/pinecone";
 
 const f = createUploadthing();
 
@@ -38,6 +40,8 @@ export const ourFileRouter = {
         },
       });
       try {
+        console.log("Upload complete triggered for file:", file.name);
+
         const response = await fetch(file.ufsUrl);
         const blob = await response.blob();
 
@@ -46,11 +50,12 @@ export const ourFileRouter = {
         const pageLevelDocs = await loader.load();
 
         const pagesAmt = pageLevelDocs.length;
-
-        const pincodeIndex = pinecone.Index("memora");
+        const pinecone = await getPineconeClient();
+        const pineconeIndex = pinecone.index("memora");
 
         const embeddings = new OpenAIEmbeddings({
           openAIApiKey: process.env.OPENAI_API_KEY,
+          model: "text-embedding-3-small",
         });
 
         await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
@@ -66,6 +71,7 @@ export const ourFileRouter = {
             id: createdFile.id,
           },
         });
+        console.log("Upload complete triggered for file:", file.name);
       } catch (err) {
         await db.file.update({
           data: {
